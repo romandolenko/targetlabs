@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -25,11 +26,13 @@ public class RestServiceFacadeImpl {
     /**
      * Upload a file with a few meta-data fields.
      *
+     * Url: /service/upload?file={file}&user={user}&docType={docType}&date={date} [POST]
+     *
      * @param file    uploaded file
      * @param user    uploading user
      * @param docType type of document
      * @param date    date of document
-     * @return The meta data of uploaded document
+     * @return        The meta data of uploaded document
      */
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public
@@ -48,11 +51,38 @@ public class RestServiceFacadeImpl {
         }
     }
 
-    @RequestMapping(value = "/metadata/{id}", method = RequestMethod.GET)
+    /**
+     *
+     *
+     *  Url: /service/documents?user={user}&docType={docType}&date={date} [GET]
+     *
+     * @param user    uploading user
+     * @param docType type of document
+     * @param date    date of document
+     * @return        Collection of document meta data
+     */
+    @RequestMapping(value = "/documents", method = RequestMethod.GET)
     @ResponseBody
-    public MetadataDocument getMetadataDocumentById(@PathVariable String id) {
-        return getRestService().getMetadataDocumentById(id);
+    public List<MetadataDocument> findDocuments(@RequestParam(value = "user", required = false) String user,
+                                                @RequestParam(value = "docType", required = false) String docType,
+                                                @RequestParam(value = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+        return getRestService().findDocuments(user, docType, date);
     }
+
+    /**
+     * Returns the document by ID.
+     *
+     * Url: /service/documents/{id} [GET]
+     *
+     * @param id The ID of a document
+     * @return The document file
+     */
+    @RequestMapping(value = "/documents/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public String getDocument(@PathVariable String id) {
+        return getRestService().getDocumentFile(id);
+    }
+
 
     public RestService getRestService() {
         return restService;

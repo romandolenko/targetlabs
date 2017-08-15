@@ -4,6 +4,7 @@ import com.targetlabs.rest.protocol.MetadataDocument;
 import com.targetlabs.rest.protocol.MetadataProperty;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,5 +14,7 @@ public interface RestService {
 
     MetadataDocument saveDocument(MultipartFile file, MetadataDocument metadataDocument);
 
-    MetadataDocument getMetadataDocumentById(String id);
+    List<MetadataDocument> findDocuments(String user, String docType, Date date);
+
+    String getDocumentFile(String id);
 }
