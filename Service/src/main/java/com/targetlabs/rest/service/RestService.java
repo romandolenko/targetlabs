@@ -1,7 +1,6 @@
 package com.targetlabs.rest.service;
 
 import com.targetlabs.rest.protocol.MetadataDocument;
-import com.targetlabs.rest.protocol.MetadataProperty;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
