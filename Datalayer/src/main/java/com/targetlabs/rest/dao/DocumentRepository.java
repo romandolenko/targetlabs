@@ -15,5 +15,5 @@ public interface DocumentRepository extends CrudRepository<DocumentEntity, Long>
     DocumentEntity saveDocument(DocumentEntity entity);
 
     @Transactional
-    DocumentEntity findAllDocumentByID(String id);
+    DocumentEntity findByID(Long id);
 }

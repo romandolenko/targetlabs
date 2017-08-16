@@ -15,11 +15,11 @@ import java.util.List;
 public interface MetadataRepository extends CrudRepository<MetadataEntity, Long> {
 
     @Transactional
-    List<MetadataEntity> findAllMetadataByUser(String user);
+    List<MetadataEntity> findByUser(String user);
 
     @Transactional
-    List<MetadataEntity> findAllMetadataByDate(Date date);
+    List<MetadataEntity> findByDate(Date date);
 
     @Transactional
-    List<MetadataEntity> findAllMetadataByDocType(String docType);
+    List<MetadataEntity> findByDocType(String docType);
 }
