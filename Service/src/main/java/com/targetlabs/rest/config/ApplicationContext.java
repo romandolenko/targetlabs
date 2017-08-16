@@ -15,7 +15,7 @@ import javax.servlet.MultipartConfigElement;
  * @author Dolenko Roman <roman.dolenko@olfatrade.com> on 15.08.2017.
  */
 @Configuration
-@ComponentScan
+@ComponentScan("com.targetlabs.rest")
 @EnableAutoConfiguration
 public class ApplicationContext extends SpringBootServletInitializer {
 

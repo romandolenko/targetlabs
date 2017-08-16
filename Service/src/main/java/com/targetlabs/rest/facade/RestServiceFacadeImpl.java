@@ -26,11 +26,11 @@ public class RestServiceFacadeImpl {
     /**
      * Upload a file with a few meta-data fields.
      *
-     * Url: /service/upload?file={file}&user={user}&docType={docType}&date={date} [POST]
+     * Url: /service/upload?file={file}&userName={userName}&localization={localization}&date={date} [POST]
      *
      * @param file    uploaded file
-     * @param user    uploading user
-     * @param docType type of document
+     * @param userName    uploading userName
+     * @param localization type of document
      * @param date    date of document
      * @return        The meta data of uploaded document
      */
@@ -39,12 +39,12 @@ public class RestServiceFacadeImpl {
     @ResponseBody
     MetadataDocument handleFileUpload(
             @RequestParam(value = "file", required = true) MultipartFile file,
-            @RequestParam(value = "user", required = true) String user,
-            @RequestParam(value = "docType", required = true) String docType,
+            @RequestParam(value = "userName", required = true) String userName,
+            @RequestParam(value = "localization", required = true) String localization,
             @RequestParam(value = "date", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
 
         try {
-            MetadataDocument metadataDocument = new MetadataDocument(user, docType, date);
+            MetadataDocument metadataDocument = new MetadataDocument(userName, localization, date);
             return getRestService().saveDocument(file, metadataDocument);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -52,21 +52,21 @@ public class RestServiceFacadeImpl {
     }
 
     /**
-     * Get collection of document metadata by search criteria (user, docType, date)
+     * Get collection of document metadata by search criteria (user, localization, date)
      *
-     *  Url: /service/documents?user={user}&docType={docType}&date={date} [GET]
+     *  Url: /service/documents?user={user}&localization={localization}&date={date} [GET]
      *
      * @param user    uploading user
-     * @param docType type of document
+     * @param localization type of document
      * @param date    date of document
      * @return        Collection of document meta data
      */
     @RequestMapping(value = "/documents", method = RequestMethod.GET)
     @ResponseBody
-    public List<MetadataDocument> findDocuments(@RequestParam(value = "user", required = false) String user,
-                                                @RequestParam(value = "docType", required = false) String docType,
+    public List<MetadataDocument> findMetadataDocuments(@RequestParam(value = "user", required = false) String user,
+                                                @RequestParam(value = "localization", required = false) String localization,
                                                 @RequestParam(value = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
-        return getRestService().findDocuments(user, docType, date);
+        return getRestService().findMetadataDocuments(user, localization, date);
     }
 
     /**
@@ -79,8 +79,8 @@ public class RestServiceFacadeImpl {
      */
     @RequestMapping(value = "/documents/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public String getDocument(@PathVariable String id) {
-        return getRestService().getDocumentFile(id);
+    public byte[] getDocument(@PathVariable String id) {
+        return getRestService().findDocumentById(id);
     }
 
 

@@ -12,10 +12,10 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Datalayer" target="1.5" />
-      <module name="Deployment" target="1.5" />
+      <module name="Datalayer" target="1.6" />
+      <module name="Deployment" target="1.6" />
       <module name="Rest" target="1.5" />
-      <module name="Service" target="1.5" />
+      <module name="Service" target="1.6" />
     </bytecodeTargetLevel>
   </component>
 </project>
