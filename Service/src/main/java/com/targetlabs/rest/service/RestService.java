@@ -3,6 +3,7 @@ package com.targetlabs.rest.service;
 import com.targetlabs.rest.protocol.MetadataDocument;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -11,9 +12,9 @@ import java.util.List;
  */
 public interface RestService {
 
-    MetadataDocument saveDocument(MultipartFile file, MetadataDocument metadataDocument);
+    MetadataDocument saveDocument(MultipartFile file, MetadataDocument metadataDocument) throws IOException;
 
     List<MetadataDocument> findDocuments(String user, String docType, Date date);
 
-    String getDocumentFile(String id);
+    String getDocumentFile(Long id);
 }
