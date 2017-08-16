@@ -1,8 +1,6 @@
 package com.targetlabs.rest.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 /**
  * @author Dolenko Roman <dolenko.roman@gmail.com> on 15.08.2017.
@@ -11,6 +9,7 @@ import javax.persistence.OneToOne;
 public class DocumentEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String fileName;

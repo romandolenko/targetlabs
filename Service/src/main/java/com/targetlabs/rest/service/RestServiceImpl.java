@@ -40,7 +40,7 @@ public class RestServiceImpl implements RestService {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
-    public String getDocumentFile(Long id) {
+    public String getDocumentFile(String id) {
         DocumentEntity entity = documentRepository.findByID(id);
         return null;
     }

@@ -16,5 +16,5 @@ public interface RestService {
 
     List<MetadataDocument> findDocuments(String user, String docType, Date date);
 
-    String getDocumentFile(Long id);
+    String getDocumentFile(String id);
 }

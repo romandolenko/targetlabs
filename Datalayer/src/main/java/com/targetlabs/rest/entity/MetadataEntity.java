@@ -10,6 +10,7 @@ import java.util.Date;
 public class MetadataEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String user;
