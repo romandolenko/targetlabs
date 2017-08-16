@@ -1,4 +1,4 @@
-package com.targetlabs.rest;
+package com.targetlabs.rest.config;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -17,7 +17,7 @@ import javax.servlet.MultipartConfigElement;
 @Configuration
 @ComponentScan
 @EnableAutoConfiguration
-public class Application extends SpringBootServletInitializer {
+public class ApplicationContext extends SpringBootServletInitializer {
 
     @Bean
     public MultipartConfigElement multipartConfigElement() {
@@ -28,7 +28,7 @@ public class Application extends SpringBootServletInitializer {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(ApplicationContext.class, args);
     }
 
     @Override
@@ -36,5 +36,5 @@ public class Application extends SpringBootServletInitializer {
         return application.sources(applicationClass);
     }
 
-    private static Class<Application> applicationClass = Application.class;
+    private static Class<ApplicationContext> applicationClass = ApplicationContext.class;
 }

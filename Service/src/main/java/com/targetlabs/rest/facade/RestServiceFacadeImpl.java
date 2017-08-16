@@ -52,7 +52,7 @@ public class RestServiceFacadeImpl {
     }
 
     /**
-     *
+     * Get collection of document metadata by search criteria (user, docType, date)
      *
      *  Url: /service/documents?user={user}&docType={docType}&date={date} [GET]
      *
