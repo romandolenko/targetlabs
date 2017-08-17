@@ -48,8 +48,8 @@ public class RestServiceFacadeImpl {
             @RequestParam(value = "date", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
 
         try {
-            MetadataDocument metadataDocument = new MetadataDocument(userName, file.getOriginalFilename(), localization, date);
-            return new ResponseEntity<>(getRestService().saveDocument(file, metadataDocument), new HttpHeaders(), HttpStatus.OK);
+            MetadataDocument metadataDocument = getRestService().saveDocument(file, userName, localization, date);
+            return new ResponseEntity<>(metadataDocument, new HttpHeaders(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

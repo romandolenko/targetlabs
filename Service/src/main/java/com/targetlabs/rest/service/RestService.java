@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface RestService {
 
-    MetadataDocument saveDocument(MultipartFile file, MetadataDocument metadataDocument) throws IOException;
+    MetadataDocument saveDocument(MultipartFile file, String userName, String localization, Date date) throws IOException;
 
     List<MetadataDocument> findMetadataDocuments(String userName, String localization, Date date) throws IOException, ParseException;
 

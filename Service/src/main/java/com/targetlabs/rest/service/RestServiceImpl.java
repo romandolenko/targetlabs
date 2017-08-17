@@ -22,7 +22,8 @@ public class RestServiceImpl implements RestService {
     private FileSystemDocumentDAO fileSystemDocumentDAO;
 
     @Override
-    public MetadataDocument saveDocument(MultipartFile file, MetadataDocument metadataDocument) throws IOException {
+    public MetadataDocument saveDocument(MultipartFile file, String userName, String localization, Date date) throws IOException {
+        MetadataDocument metadataDocument = new MetadataDocument(userName, file.getOriginalFilename(), localization, date);
         String id = getFileSystemDocumentDAO().saveDocument(new Document(file.getOriginalFilename(), file.getBytes()));
         metadataDocument.setId(id);
         getFileSystemDocumentDAO().saveMetadataDocument(metadataDocument);
