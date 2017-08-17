@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -20,19 +21,22 @@ public class RestServiceImpl implements RestService {
     @Autowired
     private FileSystemDocumentDAO fileSystemDocumentDAO;
 
+    @Override
     public MetadataDocument saveDocument(MultipartFile file, MetadataDocument metadataDocument) throws IOException {
-        String id = fileSystemDocumentDAO.saveDocument(new Document(file.getOriginalFilename(), file.getBytes()));
+        String id = getFileSystemDocumentDAO().saveDocument(new Document(file.getOriginalFilename(), file.getBytes()));
         metadataDocument.setId(id);
-        fileSystemDocumentDAO.saveMetadataDocument(metadataDocument);
+        getFileSystemDocumentDAO().saveMetadataDocument(metadataDocument);
         return metadataDocument;
     }
 
-    public List<MetadataDocument> findMetadataDocuments(String user, String localization, Date date) {
-        return null;
+    @Override
+    public List<MetadataDocument> findMetadataDocuments(String userName, String localization, Date date) throws IOException, ParseException {
+        return getFileSystemDocumentDAO().findMetadataDocuments(userName, localization, date);
     }
 
-    public byte[] findDocumentById(String id) {
-        return fileSystemDocumentDAO.findDocumentById(id);
+    @Override
+    public Document findDocumentById(String id) throws IOException, ParseException {
+        return getFileSystemDocumentDAO().findDocumentById(id);
     }
 
     public FileSystemDocumentDAO getFileSystemDocumentDAO() {

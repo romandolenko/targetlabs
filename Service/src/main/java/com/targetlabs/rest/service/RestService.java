@@ -1,9 +1,11 @@
 package com.targetlabs.rest.service;
 
+import com.targetlabs.rest.protocol.Document;
 import com.targetlabs.rest.protocol.MetadataDocument;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -14,7 +16,7 @@ public interface RestService {
 
     MetadataDocument saveDocument(MultipartFile file, MetadataDocument metadataDocument) throws IOException;
 
-    List<MetadataDocument> findMetadataDocuments(String user, String localization, Date date);
+    List<MetadataDocument> findMetadataDocuments(String userName, String localization, Date date) throws IOException, ParseException;
 
-    byte[] findDocumentById(String id);
+    Document findDocumentById(String id) throws IOException, ParseException;
 }

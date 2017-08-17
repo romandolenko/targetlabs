@@ -2,32 +2,34 @@ package com.targetlabs.rest.protocol;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author Dolenko Roman <roman.dolenko@olfatrade.com> on 15.08.2017.
  */
-public class MetadataDocument implements Serializable{
+public class MetadataDocument implements Serializable {
 
     private String id;
 
-    private String user;
+    private String userName;
 
-    private String docType;
+    private String documentName;
+
+    private String localization;
 
     private Date date;
 
-    public MetadataDocument(String user, String docType, Date date) {
-        this.user = user;
-        this.docType = docType;
+    public MetadataDocument(String userName, String documentName, String localization, Date date) {
+        this.userName = userName;
+        this.documentName = documentName;
         this.date = date;
+        this.localization = localization;
     }
 
-    public MetadataDocument(String id, String user, String docType, Date date) {
-        this.id = id;
-        this.user = user;
-        this.docType = docType;
+    public MetadataDocument(String id, String userName, String documentName, String localization, Date date) {
+        this.userName = userName;
+        this.documentName = documentName;
         this.date = date;
+        this.localization = localization;
     }
 
     public String getId() {
@@ -38,20 +40,20 @@ public class MetadataDocument implements Serializable{
         this.id = id;
     }
 
-    public String getUser() {
-        return user;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public String getDocType() {
-        return docType;
+    public String getDocumentName() {
+        return documentName;
     }
 
-    public void setDocType(String docType) {
-        this.docType = docType;
+    public void setDocumentName(String documentName) {
+        this.documentName = documentName;
     }
 
     public Date getDate() {
@@ -60,5 +62,13 @@ public class MetadataDocument implements Serializable{
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public String getLocalization() {
+        return localization;
+    }
+
+    public void setLocalization(String localization) {
+        this.localization = localization;
     }
 }
