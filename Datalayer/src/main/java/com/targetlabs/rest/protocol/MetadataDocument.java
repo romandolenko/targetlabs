@@ -26,6 +26,7 @@ public class MetadataDocument implements Serializable {
     }
 
     public MetadataDocument(String id, String userName, String documentName, String localization, Date date) {
+        this.id = id;
         this.userName = userName;
         this.documentName = documentName;
         this.date = date;

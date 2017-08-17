@@ -54,8 +54,6 @@ public class FileSystemDocumentDAOImpl implements FileSystemDocumentDAO {
         FileOutputStream out = new FileOutputStream(metadataFile);
         Properties properties = createProperties(metadataDocument);
         properties.store(out, "Meta data document");
-        out.flush();
-        out.close();
     }
 
     @Override
@@ -97,22 +95,22 @@ public class FileSystemDocumentDAOImpl implements FileSystemDocumentDAO {
         properties.put(DOCUMENT_ID, metadataDocument.getId());
         properties.put(USER_NAME, metadataDocument.getUserName());
         properties.put(DOCUMENT_NAME, metadataDocument.getDocumentName());
-        properties.put(DOCUMENT_DATE, metadataDocument.getDate());
+        properties.put(DOCUMENT_DATE, DATE_FORMAT.format(metadataDocument.getDate()));
         properties.put(DOCUMENT_LOCALIZATION, metadataDocument.getLocalization());
         return properties;
     }
 
     private MetadataDocument getMetadataDocument(String id) throws IOException, ParseException {
-        MetadataDocument document = null;
+        MetadataDocument metadataDocument = null;
         String path = getDocumentPath(id);
         File file = new File(path);
         if (file.exists()) {
             Properties properties = readProperties(id);
-            document = new MetadataDocument(properties.getProperty(DOCUMENT_ID), properties.getProperty(USER_NAME),
+            metadataDocument = new MetadataDocument(properties.getProperty(DOCUMENT_ID), properties.getProperty(USER_NAME),
                     properties.getProperty(DOCUMENT_NAME), properties.getProperty(DOCUMENT_LOCALIZATION),
                     DATE_FORMAT.parse(properties.getProperty(DOCUMENT_DATE)));
         }
-        return document;
+        return metadataDocument;
     }
 
     private List<String> getDocumentIdList() {

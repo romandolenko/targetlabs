@@ -25,6 +25,7 @@ public class RestServiceImpl implements RestService {
     public MetadataDocument saveDocument(MultipartFile file, String userName, String localization, Date date) throws IOException {
         MetadataDocument metadataDocument = new MetadataDocument(userName, file.getOriginalFilename(), localization, date);
         String id = getFileSystemDocumentDAO().saveDocument(new Document(file.getOriginalFilename(), file.getBytes()));
+        System.out.println("RestService: UUID: " + id);
         metadataDocument.setId(id);
         getFileSystemDocumentDAO().saveMetadataDocument(metadataDocument);
         return metadataDocument;

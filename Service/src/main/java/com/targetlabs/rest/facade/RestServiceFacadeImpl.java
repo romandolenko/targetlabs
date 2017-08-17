@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,36 +42,37 @@ public class RestServiceFacadeImpl {
      * @return The meta data of uploaded document
      */
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public ResponseEntity<MetadataDocument> handleFileUpload(
+    public ResponseEntity<?> handleFileUpload(
             @RequestParam(value = "file", required = true) MultipartFile file,
             @RequestParam(value = "userName", required = true) String userName,
             @RequestParam(value = "localization", required = true) String localization,
             @RequestParam(value = "date", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
 
         try {
+            System.out.println(String.format("fileName %s | userName %s | Localization %s | Date %s", file.getOriginalFilename(), userName, localization, date.toString()));
             MetadataDocument metadataDocument = getRestService().saveDocument(file, userName, localization, date);
             return new ResponseEntity<>(metadataDocument, new HttpHeaders(), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     * Get collection of document metadata by search criteria (user, localization, date)
+     * Get collection of document metadata by search criteria (userName, localization, date)
      * <p>
-     * Url: /service/documents?user={user}&localization={localization}&date={date} [GET]
+     * Url: /service/documents?userName={userName}&localization={localization}&date={date} [GET]
      *
-     * @param user         uploading user
+     * @param userName     uploading userName
      * @param localization type of document
      * @param date         date of document
      * @return Collection of document meta data
      */
-    @RequestMapping(value = "/documents", method = RequestMethod.GET)
-    public ResponseEntity<List<MetadataDocument>> findMetadataDocuments(@RequestParam(value = "user", required = false) String user,
+    @RequestMapping(value = "/metadata", method = RequestMethod.GET)
+    public ResponseEntity<List<MetadataDocument>> findMetadataDocuments(@RequestParam(value = "userName", required = false) String userName,
                                                                         @RequestParam(value = "localization", required = false) String localization,
                                                                         @RequestParam(value = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
         try {
-            List<MetadataDocument> metadataDocumentList = getRestService().findMetadataDocuments(user, localization, date);
+            List<MetadataDocument> metadataDocumentList = getRestService().findMetadataDocuments(userName, localization, date);
             return new ResponseEntity<>(metadataDocumentList, new HttpHeaders(), HttpStatus.OK);
         } catch (IOException | ParseException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -86,10 +88,15 @@ public class RestServiceFacadeImpl {
      * @return The document file
      */
     @RequestMapping(value = "/documents/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Document> getDocument(@PathVariable String id) {
+    public ResponseEntity<byte[]> getDocument(@PathVariable String id) {
         try {
             Document document = getRestService().findDocumentById(id);
-            return new ResponseEntity<Document>(document, new HttpHeaders(), HttpStatus.OK);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("application/pdf"));
+            String fileName = document.getDocumentName();
+            headers.setContentDispositionFormData(fileName, fileName);
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+            return new ResponseEntity<byte[]>(document.getDocumentData(), headers, HttpStatus.OK);
         } catch (IOException | ParseException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -98,5 +105,35 @@ public class RestServiceFacadeImpl {
 
     public RestService getRestService() {
         return restService;
+    }
+
+    private MediaType getMediaType(String extension) {
+        switch (extension) {
+            case "pdf": {
+                return MediaType.APPLICATION_PDF;
+            }
+            case "xml": {
+                return MediaType.APPLICATION_XML;
+            }
+            case "gif": {
+                return MediaType.IMAGE_GIF;
+            }
+            case "jpeg": {
+                return MediaType.IMAGE_JPEG;
+            }
+            default: {
+                return MediaType.ALL;
+            }
+        }
+
+    }
+
+    private String getExtension(String fileName) {
+        String extension = "";
+        int i = fileName.lastIndexOf('.');
+        if (i > 0) {
+            extension = fileName.substring(i + 1);
+        }
+        return extension;
     }
 }
