@@ -18,5 +18,7 @@ public interface RestService {
 
     List<MetadataDocument> findMetadataDocuments(String userName, String localization, Date date) throws IOException, ParseException;
 
+    List<MetadataDocument> findAllMetadataDocumentsByPeriod(Long ms) throws IOException, ParseException;
+
     Document findDocumentById(String id) throws IOException, ParseException;
 }

@@ -1,8 +1,11 @@
 package com.targetlabs.rest.service;
 
 import com.targetlabs.rest.dao.FileSystemDocumentDAO;
+import com.targetlabs.rest.facade.RestServiceFacadeImpl;
 import com.targetlabs.rest.protocol.Document;
 import com.targetlabs.rest.protocol.MetadataDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +20,8 @@ import java.util.List;
  */
 @Service("restService")
 public class RestServiceImpl implements RestService {
+
+    private static final Logger log = LoggerFactory.getLogger(RestServiceFacadeImpl.class);
 
     @Autowired
     private FileSystemDocumentDAO fileSystemDocumentDAO;
@@ -34,6 +39,11 @@ public class RestServiceImpl implements RestService {
     @Override
     public List<MetadataDocument> findMetadataDocuments(String userName, String localization, Date date) throws IOException, ParseException {
         return getFileSystemDocumentDAO().findMetadataDocuments(userName, localization, date);
+    }
+
+    @Override
+    public List<MetadataDocument> findAllMetadataDocumentsByPeriod(Long delay) throws IOException, ParseException {
+        return getFileSystemDocumentDAO().findAllMetadataDocumentsByPeriod(delay);
     }
 
     @Override

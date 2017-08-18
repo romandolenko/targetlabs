@@ -6,6 +6,8 @@ package com.targetlabs.rest.facade;
 import com.targetlabs.rest.protocol.Document;
 import com.targetlabs.rest.protocol.MetadataDocument;
 import com.targetlabs.rest.service.RestService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
@@ -26,6 +28,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/service")
 public class RestServiceFacadeImpl {
+
+    private static final Logger log = LoggerFactory.getLogger(RestServiceFacadeImpl.class);
+
 
     @Autowired
     private RestService restService;

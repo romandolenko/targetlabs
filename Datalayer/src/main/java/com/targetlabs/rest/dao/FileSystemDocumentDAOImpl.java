@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Dolenko Roman <dolenko.roman@gmail.com> on 16.08.2017.
@@ -59,8 +60,8 @@ public class FileSystemDocumentDAOImpl implements FileSystemDocumentDAO {
     @Override
     public List<MetadataDocument> findMetadataDocuments(String userName, String localization, Date date) throws IOException, ParseException {
         List<String> idList = getDocumentIdList();
-        if (idList == null) {
-            return new ArrayList<MetadataDocument>();
+        if (idList.isEmpty()) {
+            return new ArrayList<>();
         }
         List<MetadataDocument> metadataList = new ArrayList<MetadataDocument>(idList.size());
         for (String id : idList) {
@@ -70,6 +71,12 @@ public class FileSystemDocumentDAOImpl implements FileSystemDocumentDAO {
             }
         }
         return metadataList;
+    }
+
+    @Override
+    public List<MetadataDocument> findAllMetadataDocumentsByPeriod(Long delay) throws IOException, ParseException {
+        List<MetadataDocument> metadataList = findMetadataDocuments(null, null, null);
+        return metadataList.stream().filter(item -> (System.currentTimeMillis() - item.getDate().getTime()) < delay).collect(Collectors.toList());
     }
 
     @Override
@@ -124,7 +131,7 @@ public class FileSystemDocumentDAOImpl implements FileSystemDocumentDAO {
         if (directories != null) {
             return Arrays.asList(directories);
         }
-        return null;
+        return new ArrayList<>();
     }
 
     private Properties readProperties(String uuid) throws IOException {

@@ -3,7 +3,6 @@ package com.targetlabs.rest.dao;
 import com.targetlabs.rest.protocol.Document;
 import com.targetlabs.rest.protocol.MetadataDocument;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
@@ -20,8 +19,9 @@ public interface FileSystemDocumentDAO {
 
     List<MetadataDocument> findMetadataDocuments(String userName, String localization, Date date) throws IOException, ParseException;
 
-    Document findDocumentById(String id) throws IOException, ParseException;
+    List<MetadataDocument> findAllMetadataDocumentsByPeriod(Long ms) throws IOException, ParseException;
 
+    Document findDocumentById(String id) throws IOException, ParseException;
 
 
 }
