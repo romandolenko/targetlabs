@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,12 +34,9 @@ public class NotificationService {
     @Scheduled(fixedDelayString = SCHEDULE_DELAY_VALUE)
     private void sendNotification() {
         try {
+            log.info("Start sending notification!");
             List<MetadataDocument> metadataDocumentList = getRestService().findAllMetadataDocumentsByPeriod(Long.valueOf(fixedDelayString));
-            List<Document> documents = new ArrayList<>();
-            for(MetadataDocument metadataDocument : metadataDocumentList) {
-                documents.add(getRestService().findDocumentById(metadataDocument.getId()));
-            }
-
+            List<Document> documents = getDocuments(metadataDocumentList);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -49,5 +48,15 @@ public class NotificationService {
 
     public void setRestService(RestService restService) {
         this.restService = restService;
+    }
+
+
+
+    private List<Document> getDocuments(List<MetadataDocument> metadataDocumentList) throws IOException, ParseException {
+        List<Document> documents = new ArrayList<>();
+        for (MetadataDocument metadataDocument : metadataDocumentList) {
+            documents.add(getRestService().findDocumentById(metadataDocument.getId()));
+        }
+        return documents;
     }
 }
