@@ -22,14 +22,14 @@ public class FileSystemDocumentDAOImpl implements FileSystemDocumentDAO {
 
     private static final Logger log = Logger.getLogger(FileSystemDocumentDAOImpl.class);
 
-    private static final String ROOT_DIRECTORY = "documents";
-    private static final String METADATA_FILE = "metadata.properties";
-    private static final String DOCUMENT_ID = "UUID";
-    private static final String USER_NAME = "UserName";
-    private static final String DOCUMENT_NAME = "DocumentName";
-    private static final String DOCUMENT_DATE = "DocumentCreated";
-    private static final String DOCUMENT_LOCALIZATION = "Localization";
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    public static final String ROOT_DIRECTORY = "documents";
+    public static final String METADATA_FILE = "metadata.properties";
+    public static final String DOCUMENT_ID = "UUID";
+    public static final String USER_NAME = "UserName";
+    public static final String DOCUMENT_NAME = "DocumentName";
+    public static final String DOCUMENT_DATE = "DocumentCreated";
+    public static final String DOCUMENT_LOCALIZATION = "Localization";
+    public final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH.mm.ss");
 
     @Override
     public String saveDocument(Document document) throws IOException {
@@ -58,7 +58,7 @@ public class FileSystemDocumentDAOImpl implements FileSystemDocumentDAO {
     }
 
     @Override
-    public List<MetadataDocument> findMetadataDocuments(String userName, String localization, Date date) throws IOException, ParseException {
+    public List<MetadataDocument> findMetadataDocuments(String userName, String localization) throws IOException, ParseException {
         List<String> idList = getDocumentIdList();
         if (idList.isEmpty()) {
             return new ArrayList<>();
@@ -66,7 +66,7 @@ public class FileSystemDocumentDAOImpl implements FileSystemDocumentDAO {
         List<MetadataDocument> metadataList = new ArrayList<MetadataDocument>(idList.size());
         for (String id : idList) {
             MetadataDocument metadataDocument = getMetadataDocument(id);
-            if (isMatched(metadataDocument, userName, localization, date)) {
+            if (isMatched(metadataDocument, userName, localization)) {
                 metadataList.add(metadataDocument);
             }
         }
@@ -75,7 +75,7 @@ public class FileSystemDocumentDAOImpl implements FileSystemDocumentDAO {
 
     @Override
     public List<MetadataDocument> findAllMetadataDocumentsByPeriod(Long delay) throws IOException, ParseException {
-        List<MetadataDocument> metadataList = findMetadataDocuments(null, null, null);
+        List<MetadataDocument> metadataList = findMetadataDocuments(null, null);
         return metadataList.stream().filter(item -> (System.currentTimeMillis() - item.getDate().getTime()) < delay).collect(Collectors.toList());
     }
 
@@ -152,16 +152,13 @@ public class FileSystemDocumentDAOImpl implements FileSystemDocumentDAO {
         return properties;
     }
 
-    private boolean isMatched(MetadataDocument metadata, String userName, String localization, Date date) {
+    private boolean isMatched(MetadataDocument metadata, String userName, String localization) {
         if (metadata == null) {
             return false;
         }
         boolean match = true;
         if (userName != null) {
             match = (userName.equals(metadata.getUserName()));
-        }
-        if (match && date != null) {
-            match = (date.equals(metadata.getDate()));
         }
         if (localization != null) {
             match = (localization.equals(metadata.getLocalization()));

@@ -16,7 +16,7 @@ public interface RestService {
 
     MetadataDocument saveDocument(MultipartFile file, String userName, String localization, Date date) throws IOException;
 
-    List<MetadataDocument> findMetadataDocuments(String userName, String localization, Date date) throws IOException, ParseException;
+    List<MetadataDocument> findMetadataDocuments(String userName, String localization) throws IOException, ParseException;
 
     List<MetadataDocument> findAllMetadataDocumentsByPeriod(Long ms) throws IOException, ParseException;
 

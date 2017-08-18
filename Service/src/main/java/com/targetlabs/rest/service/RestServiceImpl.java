@@ -37,8 +37,8 @@ public class RestServiceImpl implements RestService {
     }
 
     @Override
-    public List<MetadataDocument> findMetadataDocuments(String userName, String localization, Date date) throws IOException, ParseException {
-        return getFileSystemDocumentDAO().findMetadataDocuments(userName, localization, date);
+    public List<MetadataDocument> findMetadataDocuments(String userName, String localization) throws IOException, ParseException {
+        return getFileSystemDocumentDAO().findMetadataDocuments(userName, localization);
     }
 
     @Override
