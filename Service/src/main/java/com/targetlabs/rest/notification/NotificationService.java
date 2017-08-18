@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * A scheduler to poll for new items in the last hour and send an email
+ *
  * @author Dolenko Roman <roman.dolenko@olfatrade.com> on 15.08.2017.
  */
 @PropertySource("classpath:mail.properties")
@@ -45,6 +47,9 @@ public class NotificationService {
     @Value(SCHEDULE_DELAY_VALUE)
     private String fixedDelayString;
 
+    /**
+     *  Sends email notification with document attachments.
+     */
     @Scheduled(fixedDelayString = SCHEDULE_DELAY_VALUE)
     private void sendNotification() {
         try {

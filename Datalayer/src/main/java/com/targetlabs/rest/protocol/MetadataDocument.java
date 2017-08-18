@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
+ * Meta data of a document
+ *
  * @author Dolenko Roman <roman.dolenko@olfatrade.com> on 15.08.2017.
  */
 public class MetadataDocument implements Serializable {

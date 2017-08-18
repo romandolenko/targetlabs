@@ -15,6 +15,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
+ * FileSystemDocumentDAO saves documents and meta data in the file system.
+ *
  * @author Dolenko Roman <dolenko.roman@gmail.com> on 16.08.2017.
  */
 @Service("fileSystemDocumentDAO")
@@ -31,6 +33,16 @@ public class FileSystemDocumentDAOImpl implements FileSystemDocumentDAO {
     public static final String DOCUMENT_LOCALIZATION = "Localization";
     public final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH.mm.ss");
 
+    /**
+     * Save a document in the file system.
+     *
+     * @param document Document
+     * @return The id of the document
+     * @throws IOException if the file does not exist,
+     *                   is a directory rather than a regular file,
+     *                   or for some other reason cannot be opened for
+     *                   saving.
+     */
     @Override
     public String saveDocument(Document document) throws IOException {
         String id = UUID.randomUUID().toString();
@@ -48,6 +60,15 @@ public class FileSystemDocumentDAOImpl implements FileSystemDocumentDAO {
         }
     }
 
+    /**
+     * Save a metadataDocument in the file system.
+     *
+     * @param metadataDocument MetadataDocument
+     * @throws IOException if the file does not exist,
+     *                   is a directory rather than a regular file,
+     *                   or for some other reason cannot be opened for
+     *                   saving.
+     */
     @Override
     public void saveMetadataDocument(MetadataDocument metadataDocument) throws IOException {
         String path = getDocumentPath(metadataDocument.getId());
@@ -57,6 +78,19 @@ public class FileSystemDocumentDAOImpl implements FileSystemDocumentDAO {
         properties.store(out, "Meta data document");
     }
 
+    /**
+     * Finds meta data documents by parameters.
+     * Parameters are not mandatory, to find all meta data all params should be null.
+     *
+     * @param userName User name
+     * @param localization document localization
+     * @return List of meta data documents.
+     * @throws IOException if the file does not exist,
+     *                   is a directory rather than a regular file,
+     *                   or for some other reason cannot be opened for
+     *                   reading.
+     * @throws ParseException if property file can not be parsed.
+     */
     @Override
     public List<MetadataDocument> findMetadataDocuments(String userName, String localization) throws IOException, ParseException {
         List<String> idList = getDocumentIdList();
@@ -73,12 +107,34 @@ public class FileSystemDocumentDAOImpl implements FileSystemDocumentDAO {
         return metadataList;
     }
 
+    /**
+     * Finds all meta data documents.
+     *
+     * @return List of meta data documents.
+     * @throws IOException if the file does not exist,
+     *                   is a directory rather than a regular file,
+     *                   or for some other reason cannot be opened for
+     *                   reading.
+     * @throws ParseException if property file can not be parsed.
+     */
     @Override
-    public List<MetadataDocument> findAllMetadataDocumentsByPeriod(Long delay) throws IOException, ParseException {
-        List<MetadataDocument> metadataList = findMetadataDocuments(null, null);
-        return metadataList.stream().filter(item -> (System.currentTimeMillis() - item.getDate().getTime()) < delay).collect(Collectors.toList());
+    public List<MetadataDocument> findAllMetadataDocuments() throws IOException, ParseException {
+        return findMetadataDocuments(null, null);
     }
 
+    /**
+     * Returns the document from the file system with the given id.
+     * The document file and meta data is returned.
+     * Returns null if no document was found.
+     *
+     * @param id The id of the document
+     * @return A document incl. file and meta data
+     * @throws IOException if the file does not exist,
+     *                   is a directory rather than a regular file,
+     *                   or for some other reason cannot be opened for
+     *                   reading.
+     * @throws ParseException if property file can not be parsed.
+     */
     @Override
     public Document findDocumentById(String id) throws IOException, ParseException {
         MetadataDocument metadataDocument = getMetadataDocument(id);

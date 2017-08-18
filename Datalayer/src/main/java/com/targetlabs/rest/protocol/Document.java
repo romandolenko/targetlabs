@@ -3,6 +3,8 @@ package com.targetlabs.rest.protocol;
 import java.io.Serializable;
 
 /**
+ * User document
+ *
  * @author Dolenko Roman <roman.dolenko@olfatrade.com> on 15.08.2017.
  */
 public class Document implements Serializable{

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Dolenko Roman <dolenko.roman@gmail.com> on 12.08.2017.
@@ -43,7 +44,8 @@ public class RestServiceImpl implements RestService {
 
     @Override
     public List<MetadataDocument> findAllMetadataDocumentsByPeriod(Long delay) throws IOException, ParseException {
-        return getFileSystemDocumentDAO().findAllMetadataDocumentsByPeriod(delay);
+        List<MetadataDocument> metadataList = getFileSystemDocumentDAO().findAllMetadataDocuments();
+        return metadataList.stream().filter(item -> (System.currentTimeMillis() - item.getDate().getTime()) < delay).collect(Collectors.toList());
     }
 
     @Override
