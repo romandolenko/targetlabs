@@ -19,7 +19,7 @@ import javax.servlet.MultipartConfigElement;
 @ComponentScan("com.targetlabs.rest")
 @EnableAutoConfiguration
 @EnableScheduling
-public class ApplicationContext extends SpringBootServletInitializer {
+public class Application extends SpringBootServletInitializer {
 
     @Bean
     public MultipartConfigElement multipartConfigElement() {
@@ -30,7 +30,7 @@ public class ApplicationContext extends SpringBootServletInitializer {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(ApplicationContext.class, args);
+        SpringApplication.run(Application.class, args);
     }
 
     @Override
@@ -38,5 +38,5 @@ public class ApplicationContext extends SpringBootServletInitializer {
         return application.sources(applicationClass);
     }
 
-    private static Class<ApplicationContext> applicationClass = ApplicationContext.class;
+    private static Class<Application> applicationClass = Application.class;
 }

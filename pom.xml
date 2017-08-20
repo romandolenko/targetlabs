@@ -10,7 +10,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <start-class>com.targetlabs.rest.config.ApplicationContext</start-class>
+        <start-class>com.targetlabs.rest.config.Application</start-class>
     </properties>
 
     <modules>
