@@ -1,8 +1,9 @@
 package com.targetlabs.rest.facade;
 
+import com.targetlabs.rest.error.RestValidationError;
 import com.targetlabs.rest.protocol.Document;
 import com.targetlabs.rest.protocol.MetadataDocument;
-import com.targetlabs.rest.service.RestService;
+import com.targetlabs.rest.service.DocumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +11,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.constraints.Size;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -30,13 +36,14 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/service")
-public class RestServiceFacadeImpl implements RestServiceFacade {
+@Validated
+public class DocumentServiceController {
 
-    private static final Logger log = LoggerFactory.getLogger(RestServiceFacadeImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(DocumentServiceController.class);
 
 
     @Autowired
-    private RestService restService;
+    private DocumentService documentService;
 
     /**
      * Upload a file with a few meta-data fields.
@@ -51,15 +58,14 @@ public class RestServiceFacadeImpl implements RestServiceFacade {
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public ResponseEntity<?> handleFileUpload(
             @RequestParam(value = "file", required = true) MultipartFile file,
-            @RequestParam(value = "userName", required = true) String userName,
-            @RequestParam(value = "localization", required = true) String localization) {
+            @Size(max = 200) @RequestParam(value = "userName", required = true) String userName,
+            @Size(max = 200) @RequestParam(value = "localization", required = true) String localization) {
 
         try {
             Date uploadDate = new Date(System.currentTimeMillis());
-            System.out.println(String.format("fileName %s | userName %s | Localization %s | Date %s", file.getOriginalFilename(), userName, localization, uploadDate));
-            MetadataDocument metadataDocument = getRestService().saveDocument(file, userName, localization, uploadDate);
+            MetadataDocument metadataDocument = getDocumentService().saveDocument(file, userName, localization, uploadDate);
             return new ResponseEntity<>(metadataDocument, new HttpHeaders(), HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (IOException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -74,13 +80,16 @@ public class RestServiceFacadeImpl implements RestServiceFacade {
      * @return Collection of document meta data
      */
     @RequestMapping(value = "/metadata", method = RequestMethod.GET)
-    public ResponseEntity<List<MetadataDocument>> findMetadataDocuments(@RequestParam(value = "userName", required = false) String userName,
-                                                                        @RequestParam(value = "localization", required = false) String localization) {
+    public ResponseEntity<?> findMetadataDocuments(@Size(max = 200) @RequestParam(value = "userName", required = false) String userName,
+                                                   @Size(max = 200) @RequestParam(value = "localization", required = false) String localization) {
         try {
-            List<MetadataDocument> metadataDocumentList = getRestService().findMetadataDocuments(userName, localization);
+            List<MetadataDocument> metadataDocumentList = getDocumentService().findMetadataDocuments(userName, localization);
+            if (metadataDocumentList == null || metadataDocumentList.isEmpty()) {
+                return new ResponseEntity<>("Meta data are not found!", HttpStatus.NOT_FOUND);
+            }
             return new ResponseEntity<>(metadataDocumentList, new HttpHeaders(), HttpStatus.OK);
         } catch (IOException | ParseException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -94,15 +103,17 @@ public class RestServiceFacadeImpl implements RestServiceFacade {
      * @return Collection of document meta data
      */
     @RequestMapping(value = "/documents", method = RequestMethod.GET)
-    public ResponseEntity<List<String>> findDocumentIds(@RequestParam(value = "userName", required = false) String userName,
-                                                        @RequestParam(value = "localization", required = false) String localization) {
+    public ResponseEntity<?> findDocumentIds(@Size(max = 200) @RequestParam(value = "userName", required = false) String userName,
+                                             @Size(max = 200) @RequestParam(value = "localization", required = false) String localization) {
         try {
-            List<MetadataDocument> metadataDocumentList = getRestService().findMetadataDocuments(userName, localization);
+            List<MetadataDocument> metadataDocumentList = getDocumentService().findMetadataDocuments(userName, localization);
             List<String> documentIds = metadataDocumentList.stream().map(MetadataDocument::getId).collect(Collectors.toList());
-            ;
+            if (documentIds == null || documentIds.isEmpty()) {
+                return new ResponseEntity<>("Documents identifications is not found!", HttpStatus.NOT_FOUND);
+            }
             return new ResponseEntity<>(documentIds, new HttpHeaders(), HttpStatus.OK);
         } catch (IOException | ParseException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -115,22 +126,33 @@ public class RestServiceFacadeImpl implements RestServiceFacade {
      * @return The document file
      */
     @RequestMapping(value = "/documents/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getDocument(@PathVariable String id) {
+    @ResponseBody
+    public ResponseEntity<?> getDocument(@Size(min = 1, max = 40) @PathVariable String id) {
         try {
-            Document document = getRestService().findDocumentById(id);
+            Document document = getDocumentService().findDocumentById(id);
             if (document == null) {
-                return new ResponseEntity<>("Document did not found!", HttpStatus.OK);
+                return new ResponseEntity<>("Document is not found!", HttpStatus.NOT_FOUND);
             }
             HttpHeaders headers = buildHeader(document.getDocumentName());
             return new ResponseEntity<>(document.getDocumentData(), headers, HttpStatus.OK);
         } catch (IOException | ParseException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<RestValidationError> processValidationError(ConstraintViolationException ex) {
+        Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
+        RestValidationError restValidationError = new RestValidationError();
+        constraintViolations.forEach(constraintViolation ->
+                restValidationError.addFieldError(constraintViolation.getPropertyPath().toString(), constraintViolation.getMessage()));
 
-    public RestService getRestService() {
-        return restService;
+        return new ResponseEntity<RestValidationError>(restValidationError, HttpStatus.BAD_REQUEST);
+    }
+
+
+    public DocumentService getDocumentService() {
+        return documentService;
     }
 
     private HttpHeaders buildHeader(String documentName) {

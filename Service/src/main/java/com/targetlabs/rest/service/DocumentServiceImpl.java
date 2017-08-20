@@ -1,7 +1,7 @@
 package com.targetlabs.rest.service;
 
 import com.targetlabs.rest.dao.FileSystemDocumentDAO;
-import com.targetlabs.rest.facade.RestServiceFacadeImpl;
+import com.targetlabs.rest.facade.DocumentServiceController;
 import com.targetlabs.rest.protocol.Document;
 import com.targetlabs.rest.protocol.MetadataDocument;
 import org.slf4j.Logger;
@@ -20,18 +20,17 @@ import java.util.stream.Collectors;
  * @author Dolenko Roman <dolenko.roman@gmail.com> on 12.08.2017.
  */
 @Service("restService")
-public class RestServiceImpl implements RestService {
+public class DocumentServiceImpl implements DocumentService {
 
-    private static final Logger log = LoggerFactory.getLogger(RestServiceFacadeImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(DocumentServiceController.class);
 
     @Autowired
     private FileSystemDocumentDAO fileSystemDocumentDAO;
 
     @Override
     public MetadataDocument saveDocument(MultipartFile file, String userName, String localization, Date date) throws IOException {
-        MetadataDocument metadataDocument = new MetadataDocument(userName, file.getOriginalFilename(), localization, date);
         String id = getFileSystemDocumentDAO().saveDocument(new Document(file.getOriginalFilename(), file.getBytes()));
-        System.out.println("RestService: UUID: " + id);
+        MetadataDocument metadataDocument = new MetadataDocument(userName, file.getOriginalFilename(), localization, date);
         metadataDocument.setId(id);
         getFileSystemDocumentDAO().saveMetadataDocument(metadataDocument);
         return metadataDocument;

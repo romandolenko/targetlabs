@@ -2,7 +2,7 @@ package com.targetlabs.rest.notification;
 
 import com.targetlabs.rest.protocol.Document;
 import com.targetlabs.rest.protocol.MetadataDocument;
-import com.targetlabs.rest.service.RestService;
+import com.targetlabs.rest.service.DocumentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class NotificationService {
     private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
 
     @Autowired
-    private RestService restService;
+    private DocumentService documentService;
 
     @Autowired
     private JavaMailSender mailSender;
@@ -50,11 +50,11 @@ public class NotificationService {
     /**
      *  Sends email notification with document attachments.
      */
-    @Scheduled(fixedDelayString = SCHEDULE_DELAY_VALUE)
+    @Scheduled(fixedDelayString = SCHEDULE_DELAY_VALUE, initialDelayString = SCHEDULE_DELAY_VALUE)
     private void sendNotification() {
         try {
             log.info("Start sending notification!");
-            List<MetadataDocument> metadataDocumentList = getRestService().findAllMetadataDocumentsByPeriod(Long.valueOf(fixedDelayString));
+            List<MetadataDocument> metadataDocumentList = getDocumentService().findAllMetadataDocumentsByPeriod(Long.valueOf(fixedDelayString));
             List<Document> documents = getDocuments(metadataDocumentList);
             if (documents.isEmpty()) {
                 return;
@@ -65,12 +65,12 @@ public class NotificationService {
         }
     }
 
-    public RestService getRestService() {
-        return restService;
+    public DocumentService getDocumentService() {
+        return documentService;
     }
 
-    public void setRestService(RestService restService) {
-        this.restService = restService;
+    public void setDocumentService(DocumentService documentService) {
+        this.documentService = documentService;
     }
 
     public JavaMailSender getMailSender() {
@@ -97,7 +97,7 @@ public class NotificationService {
     private List<Document> getDocuments(List<MetadataDocument> metadataDocumentList) throws IOException, ParseException {
         List<Document> documents = new ArrayList<>();
         for (MetadataDocument metadataDocument : metadataDocumentList) {
-            documents.add(getRestService().findDocumentById(metadataDocument.getId()));
+            documents.add(getDocumentService().findDocumentById(metadataDocument.getId()));
         }
         return documents;
     }

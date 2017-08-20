@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author Dolenko Roman <dolenko.roman@gmail.com> on 12.08.2017.
  */
-public interface RestService {
+public interface DocumentService {
 
     MetadataDocument saveDocument(MultipartFile file, String userName, String localization, Date date) throws IOException;
 
