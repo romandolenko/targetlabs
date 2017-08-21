@@ -1,7 +1,6 @@
 package com.targetlabs.rest.service;
 
 import com.targetlabs.rest.dao.FileSystemDocumentDAO;
-import com.targetlabs.rest.facade.DocumentServiceController;
 import com.targetlabs.rest.protocol.Document;
 import com.targetlabs.rest.protocol.MetadataDocument;
 import org.slf4j.Logger;
@@ -17,23 +16,26 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * A service to save and find Documents and MetadataDocuments
+ *
  * @author Dolenko Roman <dolenko.roman@gmail.com> on 12.08.2017.
  */
 @Service("restService")
 public class DocumentServiceImpl implements DocumentService {
 
-    private static final Logger log = LoggerFactory.getLogger(DocumentServiceController.class);
+    private static final Logger log = LoggerFactory.getLogger(DocumentServiceImpl.class);
 
     @Autowired
     private FileSystemDocumentDAO fileSystemDocumentDAO;
 
     /**
      * Saves document.
+     *
      * @param file         uploaded file
      * @param userName     uploading userName
      * @param localization type of document
      * @param date         uploaded time
-     * @return             The meta data of uploaded document
+     * @return The meta data of uploaded document
      * @throws IOException if the file does not exist,
      *                     is a directory rather than a regular file,
      *                     or for some other reason cannot be opened for
@@ -51,13 +53,13 @@ public class DocumentServiceImpl implements DocumentService {
     /**
      * Finds meta data documents by parameters.
      *
-     * @param userName User name
+     * @param userName     User name
      * @param localization document localization
      * @return List of meta data documents.
-     * @throws IOException if the file does not exist,
-     *                   is a directory rather than a regular file,
-     *                   or for some other reason cannot be opened for
-     *                   reading.
+     * @throws IOException    if the file does not exist,
+     *                        is a directory rather than a regular file,
+     *                        or for some other reason cannot be opened for
+     *                        reading.
      * @throws ParseException if property file can not be parsed.
      */
     @Override
@@ -66,13 +68,12 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     /**
-     *
      * @param delay Finds meta data documents by schedule delay in milliseconds.
      * @return List of meta data documents.
-     * @throws IOException if the file does not exist,
-     *                   is a directory rather than a regular file,
-     *                   or for some other reason cannot be opened for
-     *                   reading.
+     * @throws IOException    if the file does not exist,
+     *                        is a directory rather than a regular file,
+     *                        or for some other reason cannot be opened for
+     *                        reading.
      * @throws ParseException if property file can not be parsed.
      */
     @Override
@@ -88,10 +89,10 @@ public class DocumentServiceImpl implements DocumentService {
      *
      * @param id The id of the document
      * @return A document incl. file and meta data
-     * @throws IOException if the file does not exist,
-     *                   is a directory rather than a regular file,
-     *                   or for some other reason cannot be opened for
-     *                   reading.
+     * @throws IOException    if the file does not exist,
+     *                        is a directory rather than a regular file,
+     *                        or for some other reason cannot be opened for
+     *                        reading.
      * @throws ParseException if property file can not be parsed.
      */
     @Override
