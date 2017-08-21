@@ -48,9 +48,11 @@ public class FileSystemDocumentDAOImpl implements FileSystemDocumentDAO {
         String path = getDocumentPath(id);
         File file = new File(path);
         if (file.mkdirs()) {
-            BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(new File(path), document.getDocumentName())));
+            FileOutputStream fileOutputStream = new FileOutputStream(new File(new File(path), document.getDocumentName()));
+            BufferedOutputStream stream = new BufferedOutputStream(fileOutputStream);
             stream.write(document.getDocumentData());
             stream.close();
+            fileOutputStream.close();
             return id;
         } else {
             String errorMessage = "Error while inserting document";
@@ -75,6 +77,7 @@ public class FileSystemDocumentDAOImpl implements FileSystemDocumentDAO {
         FileOutputStream out = new FileOutputStream(metadataFile);
         Properties properties = createProperties(metadataDocument);
         properties.store(out, "Meta data document");
+        out.close();
     }
 
     /**
@@ -214,6 +217,9 @@ public class FileSystemDocumentDAOImpl implements FileSystemDocumentDAO {
         boolean match = true;
         if (userName != null) {
             match = (userName.equals(metadata.getUserName()));
+            if (!match) {
+                return false;
+            }
         }
         if (localization != null) {
             match = (localization.equals(metadata.getLocalization()));

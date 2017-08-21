@@ -58,8 +58,8 @@ public class DocumentServiceController {
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public ResponseEntity<?> handleFileUpload(
             @RequestParam(value = "file", required = true) MultipartFile file,
-            @Size(max = 200) @RequestParam(value = "userName", required = true) String userName,
-            @Size(max = 200) @RequestParam(value = "localization", required = true) String localization) {
+            @Size(max = 100) @RequestParam(value = "userName", required = true) String userName,
+            @Size(max = 100) @RequestParam(value = "localization", required = true) String localization) {
 
         try {
             Date uploadDate = new Date(System.currentTimeMillis());
@@ -80,8 +80,8 @@ public class DocumentServiceController {
      * @return Collection of document meta data
      */
     @RequestMapping(value = "/metadata", method = RequestMethod.GET)
-    public ResponseEntity<?> findMetadataDocuments(@Size(max = 200) @RequestParam(value = "userName", required = false) String userName,
-                                                   @Size(max = 200) @RequestParam(value = "localization", required = false) String localization) {
+    public ResponseEntity<?> findMetadataDocuments(@Size(max = 100) @RequestParam(value = "userName", required = false) String userName,
+                                                   @Size(max = 100) @RequestParam(value = "localization", required = false) String localization) {
         try {
             List<MetadataDocument> metadataDocumentList = getDocumentService().findMetadataDocuments(userName, localization);
             if (metadataDocumentList == null || metadataDocumentList.isEmpty()) {
@@ -103,8 +103,8 @@ public class DocumentServiceController {
      * @return Collection of document meta data
      */
     @RequestMapping(value = "/documents", method = RequestMethod.GET)
-    public ResponseEntity<?> findDocumentIds(@Size(max = 200) @RequestParam(value = "userName", required = false) String userName,
-                                             @Size(max = 200) @RequestParam(value = "localization", required = false) String localization) {
+    public ResponseEntity<?> findDocumentIds(@Size(max = 100) @RequestParam(value = "userName", required = false) String userName,
+                                             @Size(max = 100) @RequestParam(value = "localization", required = false) String localization) {
         try {
             List<MetadataDocument> metadataDocumentList = getDocumentService().findMetadataDocuments(userName, localization);
             List<String> documentIds = metadataDocumentList.stream().map(MetadataDocument::getId).collect(Collectors.toList());
@@ -127,7 +127,7 @@ public class DocumentServiceController {
      */
     @RequestMapping(value = "/documents/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getDocument(@Size(min = 1, max = 40) @PathVariable String id) {
+    public ResponseEntity<?> getDocument(@Size(min = 36, max = 36) @PathVariable String id) {
         try {
             Document document = getDocumentService().findDocumentById(id);
             if (document == null) {
@@ -157,41 +157,8 @@ public class DocumentServiceController {
 
     private HttpHeaders buildHeader(String documentName) {
         HttpHeaders headers = new HttpHeaders();
-        String extension = getExtension(documentName);
-        MediaType mediaType = getMediaType(extension);
-        headers.setContentType(mediaType);
+        headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setContentDispositionFormData(documentName, documentName);
-        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
         return headers;
-    }
-
-    private MediaType getMediaType(String extension) {
-        switch (extension) {
-            case "pdf": {
-                return MediaType.APPLICATION_PDF;
-            }
-            case "xml": {
-                return MediaType.APPLICATION_XML;
-            }
-            case "gif": {
-                return MediaType.IMAGE_GIF;
-            }
-            case "jpeg": {
-                return MediaType.IMAGE_JPEG;
-            }
-            default: {
-                return MediaType.ALL;
-            }
-        }
-
-    }
-
-    private String getExtension(String fileName) {
-        String extension = "";
-        int i = fileName.lastIndexOf('.');
-        if (i > 0) {
-            extension = fileName.substring(i + 1);
-        }
-        return extension;
     }
 }
