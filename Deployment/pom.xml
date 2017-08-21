@@ -10,8 +10,21 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>rest-services-web-app</artifactId>
+    <packaging>war</packaging>
+
+    <properties>
+        <start-class>com.targetlabs.rest.config.Application</start-class>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+    </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.targetlabs.rest.services</groupId>
+            <artifactId>rest-protocol</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.targetlabs.rest.services</groupId>
             <artifactId>rest-datalayer</artifactId>
@@ -22,9 +35,39 @@
             <artifactId>rest-services</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
     </dependencies>
 
-
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 
 </project>

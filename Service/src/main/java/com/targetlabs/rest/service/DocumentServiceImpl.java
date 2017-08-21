@@ -27,6 +27,18 @@ public class DocumentServiceImpl implements DocumentService {
     @Autowired
     private FileSystemDocumentDAO fileSystemDocumentDAO;
 
+    /**
+     * Saves document.
+     * @param file         uploaded file
+     * @param userName     uploading userName
+     * @param localization type of document
+     * @param date         uploaded time
+     * @return             The meta data of uploaded document
+     * @throws IOException if the file does not exist,
+     *                     is a directory rather than a regular file,
+     *                     or for some other reason cannot be opened for
+     *                     saving.
+     */
     @Override
     public MetadataDocument saveDocument(MultipartFile file, String userName, String localization, Date date) throws IOException {
         String id = getFileSystemDocumentDAO().saveDocument(new Document(file.getOriginalFilename(), file.getBytes()));
@@ -36,17 +48,52 @@ public class DocumentServiceImpl implements DocumentService {
         return metadataDocument;
     }
 
+    /**
+     * Finds meta data documents by parameters.
+     *
+     * @param userName User name
+     * @param localization document localization
+     * @return List of meta data documents.
+     * @throws IOException if the file does not exist,
+     *                   is a directory rather than a regular file,
+     *                   or for some other reason cannot be opened for
+     *                   reading.
+     * @throws ParseException if property file can not be parsed.
+     */
     @Override
     public List<MetadataDocument> findMetadataDocuments(String userName, String localization) throws IOException, ParseException {
         return getFileSystemDocumentDAO().findMetadataDocuments(userName, localization);
     }
 
+    /**
+     *
+     * @param delay Finds meta data documents by schedule delay in milliseconds.
+     * @return List of meta data documents.
+     * @throws IOException if the file does not exist,
+     *                   is a directory rather than a regular file,
+     *                   or for some other reason cannot be opened for
+     *                   reading.
+     * @throws ParseException if property file can not be parsed.
+     */
     @Override
     public List<MetadataDocument> findAllMetadataDocumentsByPeriod(Long delay) throws IOException, ParseException {
         List<MetadataDocument> metadataList = getFileSystemDocumentDAO().findAllMetadataDocuments();
         return metadataList.stream().filter(item -> (System.currentTimeMillis() - item.getDate().getTime()) < delay).collect(Collectors.toList());
     }
 
+    /**
+     * Returns the document from the file system with the given id.
+     * The document file and meta data is returned.
+     * Returns null if no document was found.
+     *
+     * @param id The id of the document
+     * @return A document incl. file and meta data
+     * @throws IOException if the file does not exist,
+     *                   is a directory rather than a regular file,
+     *                   or for some other reason cannot be opened for
+     *                   reading.
+     * @throws ParseException if property file can not be parsed.
+     */
     @Override
     public Document findDocumentById(String id) throws IOException, ParseException {
         return getFileSystemDocumentDAO().findDocumentById(id);
