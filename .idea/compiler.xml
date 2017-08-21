@@ -9,7 +9,6 @@
         <module name="Datalayer" />
         <module name="Deployment" />
         <module name="Protocol" />
-        <module name="RestProtocol" />
         <module name="Service" />
       </profile>
     </annotationProcessing>
@@ -17,8 +16,7 @@
       <module name="Datalayer" target="1.8" />
       <module name="Deployment" target="1.8" />
       <module name="Protocol" target="1.8" />
-      <module name="Rest" target="1.5" />
-      <module name="RestProtocol" target="1.5" />
+      <module name="Rest" target="1.8" />
       <module name="Service" target="1.8" />
     </bytecodeTargetLevel>
   </component>
